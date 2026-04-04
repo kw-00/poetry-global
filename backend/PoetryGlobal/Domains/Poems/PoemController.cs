@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using PoetryGlobal.Domains.Poems.Service;
+using PoetryGlobal.Domains.Poems.Services;
 
-namespace PoetryGlobal.Domains.Poems.Controller
+namespace PoetryGlobal.Domains.Poems.Controllers
 {
 
 
@@ -9,19 +9,19 @@ namespace PoetryGlobal.Domains.Poems.Controller
     [ApiController]
     public class PoemController : ControllerBase
     {
-        private readonly IPoemService _poemService;
+        private readonly IPoemsService _poemService;
 
-        public PoemController(IPoemService poemService)
+        public PoemController(IPoemsService poemService)
         {
             _poemService = poemService;
         }
 
         [HttpGet("/id/{poemId:int}/language/{languageId:int}")]
-        public async Task<ActionResult> GetPoem(int poemId, int languageId)
+        public async Task<ActionResult> GetPoemAsync(int poemId, int languageId)
         {
             try
             {
-                var responseDto = await _poemService.GetPoem(poemId, languageId);
+                var responseDto = await _poemService.GetPoemAsync(poemId, languageId);
                 return Ok(responseDto);
             }
             catch (Exception ex)
@@ -30,12 +30,27 @@ namespace PoetryGlobal.Domains.Poems.Controller
             }
         }
 
-        [HttpGet("/title/{title:string}/author/{author:string}")]
-        public async Task<ActionResult> SearchPoems(string title, string author)
+
+        [HttpGet("/database/title/{title:string}/author/{author:string}")]
+        public async Task<ActionResult> SearchDatabaseForPoemsAsync(string title, string author)
         {
             try
             {
-                var responseDto = await _poemService.SearchPoems(title, author);
+                var responseDto = await _poemService.DatabaseSearchAsync(title, author);
+                return Ok(responseDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while processing your request. Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("/poetrydb/title/{title:string}/author/{author:string}")]
+        public async Task<ActionResult> SearchPoetryDbForPoemsAsync(string titleQuery, string authorQuery)
+        {
+            try
+            {
+                var responseDto = await _poemService.PoetryDbSearchAsync(titleQuery, authorQuery);
                 return Ok(responseDto);
             }
             catch (Exception ex)

@@ -2,11 +2,13 @@
 
 namespace PoetryGlobal.Domains.Poems.Models
 { 
-    public class PoemVersion : PoemMetadata
+    public class PoemVersion
     {
+        public required string Title { get; init; }
+        public required string Author { get; init; }
         public required int LanguageId { get; init; }
         public required bool IsOriginal { get; init; }
-        public required List<string> Lines { get; init; }
+        public required string Content { get; init; }
 
     }
 }

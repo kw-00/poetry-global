@@ -7,6 +7,6 @@ namespace PoetryGlobal.Domains.Poems.Contracts
 {
     public class GetPoemResponse
     {
-        public required PoemVersion Poem { get; init; }
+        public required PoemVersionWithId Poem { get; init; }
     }
 }

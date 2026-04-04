@@ -11,7 +11,7 @@ services:
       - db
     environment:
       ASPNETCORE_URLS: "http://+:8080"
-      ConnectionStrings__Default: "Host=db;Port=5432;Database=poetryglobal;Username=poetryglobal;Password=poetryglobal"
+      DB_CONNECTION_STRING: "Host=db;Port=5432;Database=poetryglobal;Username=poetryglobal;Password=poetryglobal"
 
   db:
     build:

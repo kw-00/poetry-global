@@ -18,11 +18,11 @@ namespace PoetryGlobal.Domains.Languages.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Language>>> GetAllLanguages()
+        public async Task<ActionResult<List<Language>>> GetAllLanguagesAsync()
         {
             try
             {
-                var languages = await _languageService.GetAllLanguages();
+                var languages = await _languageService.GetAllLanguagesAsync();
                 return Ok(languages);
             }
             catch (Exception ex)
