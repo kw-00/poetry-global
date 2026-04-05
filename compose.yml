@@ -12,6 +12,8 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       DB_CONNECTION_STRING: "Host=db;Port=5432;Database=poetryglobal;Username=poetryglobal;Password=poetryglobal"
+      JWT_SECRET: "secret"
+      DOTNET_ENVIRONMENT: "Development"
 
   db:
     build:
