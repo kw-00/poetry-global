@@ -27,9 +27,9 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var secret = Environment.GetEnvironmentVariable("JWT_SECRET") 
+        var secret = Environment.GetEnvironmentVariable("JWT_SECRET")
             ?? throw new EnvironmentVariableNotSetException("JWT_SECRET");
-        
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = false,

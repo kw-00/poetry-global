@@ -1,7 +1,7 @@
 
 
 namespace PoetryGlobal.Features.Poems
-{ 
+{
     public class PoemVersion
     {
         public required string Title { get; init; }

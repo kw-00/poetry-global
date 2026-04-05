@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS poem_metadata (
 ALTER TABLE poem_metadata ADD CONSTRAINT unique_title_author UNIQUE (title, author);
 
 
-CREATE TABLE IF NOT EXISTS poem_texts (
+CREATE TABLE IF NOT EXISTS poem_versions (
     poem_metadata_id INT NOT NULL,
     language_id INT NOT NULL,
     is_original BOOLEAN,
@@ -30,16 +30,16 @@ CREATE TABLE IF NOT EXISTS poem_texts (
 );
 
 
-ALTER TABLE poem_texts ADD CONSTRAINT fk_poem_metadata
+ALTER TABLE poem_versions ADD CONSTRAINT fk_poem_metadata
     FOREIGN KEY (poem_metadata_id) REFERENCES poem_metadata(id) 
 ;
 
-ALTER TABLE poem_texts ADD CONSTRAINT fk_language
+ALTER TABLE poem_versions ADD CONSTRAINT fk_language
     FOREIGN KEY (language_id) REFERENCES languages(id)
 ;
 
-/** Making sure there is only one original text per poem */
-ALTER TABLE poem_texts ADD CONSTRAINT one_original_per_poem 
+/** Making sure there is only one original version per poem */
+ALTER TABLE poem_versions ADD CONSTRAINT one_original_per_poem 
     UNIQUE (poem_metadata_id) WHERE is_original = true
 ;
 

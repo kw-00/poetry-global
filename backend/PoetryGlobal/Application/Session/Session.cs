@@ -12,15 +12,15 @@ namespace PoetryGlobal.Session
         {
             var httpContext = _httpContextAccessor.HttpContext;
 
-            if (httpContext is null) 
+            if (httpContext is null)
             {
                 throw new NullReferenceException("HttpContext is not available.");
             }
 
-            var sessionGuidClaim = 
+            var sessionGuidClaim =
                 httpContext.User.Claims
                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                
+
             if (sessionGuidClaim is null || !Guid.TryParse(sessionGuidClaim, out var sessionGuid))
             {
                 throw new ValidationException("Session GUID claim is missing or invalid.");

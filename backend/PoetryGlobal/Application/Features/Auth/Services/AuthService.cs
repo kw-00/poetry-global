@@ -18,7 +18,7 @@ namespace PoetryGlobal.Features.Auth
             };
 
             var issuer = jwtConfig["Issuer"] ?? throw new AppSettingsKeyNotFound("Jwt.Issuer");
-            var lifetimeMinutes = int.Parse(jwtConfig["LifetimeMinutes"] 
+            var lifetimeMinutes = int.Parse(jwtConfig["LifetimeMinutes"]
                 ?? throw new AppSettingsKeyNotFound("Jwt.LifetimeMinutes"));
 
             var token = new JwtSecurityToken(
@@ -33,7 +33,7 @@ namespace PoetryGlobal.Features.Auth
 
         private SigningCredentials _GetSigningCredentials()
         {
-            string secret = Environment.GetEnvironmentVariable("JWT_SECRET") 
+            string secret = Environment.GetEnvironmentVariable("JWT_SECRET")
                 ?? throw new EnvironmentVariableNotSetException("JWT_SECRET");
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret));
             return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
