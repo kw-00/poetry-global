@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using PoetryGlobal.Features.Poems;
 
 namespace PoetryGlobal.Features.Poems
 {
@@ -32,25 +31,11 @@ namespace PoetryGlobal.Features.Poems
 
 
         [HttpGet("/database/title/{title:string}/author/{author:string}")]
-        public async Task<ActionResult> SearchDatabaseForPoemsAsync(string title, string author)
+        public async Task<ActionResult> SearchPoemsAsync(string title, string author)
         {
             try
             {
                 var responseDto = await _poemService.SearchPoemsAsync(title, author);
-                return Ok(responseDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while processing your request. Error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("/poetrydb/title/{title:string}/author/{author:string}")]
-        public async Task<ActionResult> SearchPoetryDbForPoemsAsync(string titleQuery, string authorQuery)
-        {
-            try
-            {
-                var responseDto = await _poemService.PoetryDbSearchAsync(titleQuery, authorQuery);
                 return Ok(responseDto);
             }
             catch (Exception ex)

@@ -1,4 +1,4 @@
-namespace PoetryGlobal.Features.Languages
+namespace PoetryGlobal.Features.Poems
 {
     public class GetAllLanguagesResponse
     {

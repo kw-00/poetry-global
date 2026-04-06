@@ -1,8 +1,5 @@
 
 
-
-using PoetryGlobal.Features.Poems;
-
 namespace PoetryGlobal.Features.Poems
 {
     public class GetPoemResponse

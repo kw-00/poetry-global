@@ -1,8 +1,4 @@
 
-
-using PoetryGlobal.Features.Poems;
-using PoetryGlobal.Features.Poems;
-
 namespace PoetryGlobal.Features.Poems
 {
     public interface IPoemsService

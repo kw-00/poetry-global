@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace PoetryGlobal.Features.Languages
+namespace PoetryGlobal.Features.Poems
 {
     public class LanguagesService(NpgsqlDataSource dataSource) : ILanguagesService
     {
