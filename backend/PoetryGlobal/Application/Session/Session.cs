@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
-namespace PoetryGlobal.Session
+namespace PoetryGlobal.GlobalData.Session
 {
     public class CurrentSession
     {

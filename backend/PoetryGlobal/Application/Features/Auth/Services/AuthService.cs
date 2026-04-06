@@ -17,9 +17,9 @@ namespace PoetryGlobal.Features.Auth
                 new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
             };
 
-            var issuer = jwtConfig["Issuer"] ?? throw new AppSettingsKeyNotFound("Jwt.Issuer");
+            var issuer = jwtConfig["Issuer"] ?? throw new AppSettingsKeyNotFoundException("Jwt:Issuer");
             var lifetimeMinutes = int.Parse(jwtConfig["LifetimeMinutes"]
-                ?? throw new AppSettingsKeyNotFound("Jwt.LifetimeMinutes"));
+                ?? throw new AppSettingsKeyNotFoundException("Jwt:LifetimeMinutes"));
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

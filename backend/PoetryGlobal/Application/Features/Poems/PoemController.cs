@@ -36,7 +36,7 @@ namespace PoetryGlobal.Features.Poems
         {
             try
             {
-                var responseDto = await _poemService.DatabaseSearchAsync(title, author);
+                var responseDto = await _poemService.SearchPoemsAsync(title, author);
                 return Ok(responseDto);
             }
             catch (Exception ex)

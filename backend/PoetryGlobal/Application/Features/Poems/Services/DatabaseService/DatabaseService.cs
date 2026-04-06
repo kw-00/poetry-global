@@ -10,7 +10,7 @@ namespace PoetryGlobal.Features.Poems
     {
         private readonly NpgsqlDataSource _dataSource = dataSource;
 
-        public async Task<List<PoemMetadataWithId>> SearchForPoemsAsync(string titleQuery, string authorQuery)
+        public async Task<List<PoemMetadataWithId>> SearchPoemsAsync(string titleQuery, string authorQuery)
         {
             var query = _dataSource.CreateCommand(
                 @"
@@ -115,8 +115,6 @@ namespace PoetryGlobal.Features.Poems
             query.Parameters.AddWithValue("content", poemVersion.Content);
 
             await query.ExecuteNonQueryAsync();
-
-            
         }
 
     }

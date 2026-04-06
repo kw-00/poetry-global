@@ -6,7 +6,7 @@ namespace PoetryGlobal.Features.Poems
 {
     public interface IDatabaseService
     {
-        Task<List<PoemMetadataWithId>> SearchForPoemsAsync(string titleQuery, string authorQuery);
+        Task<List<PoemMetadataWithId>> SearchPoemsAsync(string titleQuery, string authorQuery);
         Task<PoemVersionWithId?> GetPoemVersionAsync(int poemId, int languageId);
 
         Task<List<PoemMetadataWithId>> SavePoemOriginalsAsync(List<PoemVersion> originalPoemVersions);
