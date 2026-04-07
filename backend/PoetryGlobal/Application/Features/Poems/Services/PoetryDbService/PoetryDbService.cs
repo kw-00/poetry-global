@@ -1,9 +1,10 @@
 
 
-using PoetryGlobal.Application.Exceptions;
+using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Poems
 {
+
     public class PoetryDbService(HttpClient httpClient, IConfiguration configuration) : IPoetryDbService
     {
         private readonly HttpClient _httpClient = httpClient;
@@ -19,23 +20,33 @@ namespace PoetryGlobal.Features.Poems
         private readonly string _batchSize = configuration[_BATCH_SIZE_KEY] 
             ?? throw new AppSettingsKeyNotFoundException(_BATCH_SIZE_KEY);
 
-        public async Task<List<PoetryDbPoemLinesMerged>> GetPoemsAsync(string titleQuery, string authorQuery)
+        public async Task<List<Poem>> GetPoemsAsync(string titleQuery, string authorQuery)
         {
-            var message = new HttpRequestMessage(HttpMethod.Get, $"{_poetryDbBaseUrl}/author,title,poemcount/{authorQuery};{titleQuery};{_batchSize}/author,title,lines");
+            var url = Uri.EscapeDataString(
+                $"{_poetryDbBaseUrl}/author,title,poemcount/{authorQuery};{titleQuery};{_batchSize}/author,title,lines"
+            );
+            var message = new HttpRequestMessage(HttpMethod.Get, url);
             message.Headers.Remove("Accept");
             message.Headers.Add("Accept", "application/json");
             var response = await _httpClient.SendAsync(message);
             response.EnsureSuccessStatusCode();
-            var poems = await response.Content.ReadFromJsonAsync<List<PoetryDbPoem>>() 
+            var poems = await response.Content.ReadFromJsonAsync<List<PoetryDbResponse>>() 
                 ?? throw new NullReferenceException("Deserialized poems list is null.");
 
-            return poems.Select(p => new PoetryDbPoemLinesMerged
+            return [.. poems.Select(p => new Poem
             {
                 Title = p.Title,
                 Author = p.Author,
-                LinesMerged = string.Join("\n", p.Lines)
-            }).ToList();
+                VersionText = string.Join("\n", p.Lines)
+            })];
         }
 
+    }
+
+    internal class PoetryDbResponse
+    {
+        public required string Title { get; init; }
+        public required string Author { get; init; }
+        public required List<string> Lines { get; init; }
     }
 }

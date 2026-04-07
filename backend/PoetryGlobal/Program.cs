@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using PoetryGlobal.Application.Exceptions;
+using PoetryGlobal.Exceptions;
 using PoetryGlobal.Features.Auth;
-using PoetryGlobal.Features.Languages;
 using PoetryGlobal.Features.Poems;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +13,13 @@ builder.Services.AddOpenApi();
 // FEATURE: Auth
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// FEATURE: Languages
-builder.Services.AddScoped<ILanguagesService, LanguagesService>();
 
 // FEATURE: Poems
-builder.Services.AddScoped<IPoemsService, PoemsService>();
+builder.Services.AddScoped<ILanguageRepository, LanguageRepository>();
+builder.Services.AddScoped<IPoemRepository, PoemRepository>();
 builder.Services.AddScoped<IPoetryDbService, PoetryDbService>();
-builder.Services.AddScoped<IDatabaseService, DatabaseService>();
+builder.Services.AddScoped<ITranslationService, TranslationService>();
+builder.Services.AddScoped<IPoemOrchestration, PoemOrchestration>();
 
 builder.Services.AddControllers();
 

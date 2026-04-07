@@ -8,9 +8,9 @@ namespace PoetryGlobal.Features.Poems
     [ApiController]
     public class PoemController : ControllerBase
     {
-        private readonly IPoemsService _poemService;
+        private readonly IPoemOrchestration _poemService;
 
-        public PoemController(IPoemsService poemService)
+        public PoemController(IPoemOrchestration poemService)
         {
             _poemService = poemService;
         }
@@ -20,8 +20,8 @@ namespace PoetryGlobal.Features.Poems
         {
             try
             {
-                var responseDto = await _poemService.GetPoemAsync(poemId, languageId);
-                return Ok(responseDto);
+                var poems = await _poemService.GetPoemAsync(poemId, languageId);
+                return Ok(poems);
             }
             catch (Exception ex)
             {
@@ -35,8 +35,8 @@ namespace PoetryGlobal.Features.Poems
         {
             try
             {
-                var responseDto = await _poemService.SearchPoemsAsync(title, author);
-                return Ok(responseDto);
+                var poemMetadata = await _poemService.SearchPoemsAsync(title, author);
+                return Ok(poemMetadata);
             }
             catch (Exception ex)
             {

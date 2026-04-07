@@ -2,11 +2,11 @@ using Npgsql;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class LanguagesService(NpgsqlDataSource dataSource) : ILanguagesService
+    public class LanguageRepository(NpgsqlDataSource dataSource) : ILanguageRepository
     {
         private readonly NpgsqlDataSource _dataSource = dataSource;
 
-        public async Task<GetAllLanguagesResponse> GetAllLanguagesAsync()
+        public async Task<List<PersistedLanguage>> GetAllLanguagesAsync()
         {
             await using var query = _dataSource.CreateCommand(
                 """
@@ -14,17 +14,17 @@ namespace PoetryGlobal.Features.Poems
                 """
             );
             await using var reader = await query.ExecuteReaderAsync();
-            var languages = new List<Language>();
+            var languages = new List<PersistedLanguage>();
             while (await reader.ReadAsync())
             {
-                var language = new Language
+                var language = new PersistedLanguage
                 {
                     Id = reader.GetInt32(0),
                     Code = reader.GetString(1)
                 };
                 languages.Add(language);
             }
-            return new GetAllLanguagesResponse { Languages = languages };
+            return languages;
         }
 
     }

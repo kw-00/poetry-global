@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace PoetryGlobal.MemoryCache
+namespace PoetryGlobal.Shared.MemoryCache
 {
     public class MemoryCache<T> : IMemoryCache<T>
     {

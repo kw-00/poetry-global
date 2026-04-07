@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS poem_versions (
     poem_metadata_id INT NOT NULL,
     language_id INT NOT NULL,
     is_original BOOLEAN,
-    content TEXT NOT NULL,
+    version_text TEXT NOT NULL,
     PRIMARY KEY (poem_metadata_id, language_id)
 );
 

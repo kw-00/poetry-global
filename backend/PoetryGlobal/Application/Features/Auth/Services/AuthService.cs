@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
-using PoetryGlobal.Application.Exceptions;
+using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Auth
 {

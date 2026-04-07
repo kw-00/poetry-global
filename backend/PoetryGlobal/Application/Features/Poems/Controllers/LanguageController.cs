@@ -7,9 +7,9 @@ namespace PoetryGlobal.Features.Poems
     [Route("api/[controller]")]
     public class LanguageController : ControllerBase
     {
-        private readonly ILanguagesService _languageService;
+        private readonly ILanguageRepository _languageService;
 
-        public LanguageController(ILanguagesService languageService)
+        public LanguageController(ILanguageRepository languageService)
         {
             _languageService = languageService;
         }
