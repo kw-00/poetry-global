@@ -8,11 +8,9 @@ namespace PoetryGlobal.Features.Poems
 
         public async Task<List<PersistedLanguage>> GetAllLanguagesAsync()
         {
-            await using var query = _dataSource.CreateCommand(
-                """
+            await using var query = _dataSource.CreateCommand(@"
                 SELECT id, code FROM app.languages;
-                """
-            );
+            ");
             await using var reader = await query.ExecuteReaderAsync();
             var languages = new List<PersistedLanguage>();
             while (await reader.ReadAsync())

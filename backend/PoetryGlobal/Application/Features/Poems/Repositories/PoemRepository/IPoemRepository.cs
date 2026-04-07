@@ -4,10 +4,13 @@ namespace PoetryGlobal.Features.Poems
     public interface IPoemRepository
     {
         Task<List<PersistedPoemMetadata>> SearchPoemsAsync(string titleQuery, string authorQuery);
+
+        Task<PersistedPoem?> GetPoemOriginalAsync(int poemId);
+
         Task<PersistedPoem?> GetPoemVersionAsync(int poemId, int languageId);
 
-        Task<List<PersistedPoemMetadata>> SavePoemOriginalsAsync(List<Poem> originalPoemVersions);
+        Task SavePoemOriginalsAsync(List<Poem> originalPoemVersions);
 
-        Task SavePoemVersionAsync(Poem poemVersion);
+        Task<PersistedPoem?> SavePoemVersionAsync(Poem poemVersion);
     }
 }

@@ -3,7 +3,8 @@ namespace PoetryGlobal.Features.Poems
 {
     public interface IPoemOrchestration
     {
-        Task<List<PersistedPoemMetadata>> SearchPoemsAsync(string titleQuery, string authorQuery);
+        Task PreparePagesAsync(string titleQuery, string authorQuery);
+        PersistedPoemMetadata[] GetPage(int page);
         Task<PersistedPoem> GetPoemAsync(int poemId, int languageId);
     }
 }

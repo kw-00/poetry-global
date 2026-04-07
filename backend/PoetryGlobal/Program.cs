@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using PoetryGlobal.Exceptions;
 using PoetryGlobal.Features.Auth;
 using PoetryGlobal.Features.Poems;
@@ -10,9 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton(_ =>
+{
+    var connectionStringKey = "DB_CONNECTION_STRING";
+    var connectionString = Environment.GetEnvironmentVariable(connectionStringKey) 
+        ?? throw new EnvironmentVariableNotSetException(connectionStringKey);
+    connectionString += ";Search Path=${user},public,app";
+    return NpgsqlDataSource.Create(connectionString);
+});
+
 // FEATURE: Auth
 builder.Services.AddScoped<IAuthService, AuthService>();
-
 
 // FEATURE: Poems
 builder.Services.AddScoped<ILanguageRepository, LanguageRepository>();
@@ -43,6 +53,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 var app = builder.Build();
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -50,7 +61,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 
 app.Run();

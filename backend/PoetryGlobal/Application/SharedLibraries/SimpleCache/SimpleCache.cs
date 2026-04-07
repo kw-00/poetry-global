@@ -1,12 +1,12 @@
 using System.Collections.Concurrent;
 
-namespace PoetryGlobal.Shared.MemoryCache
+namespace PoetryGlobal.Shared.SimpleCache
 {
-    public class MemoryCache<T> : IMemoryCache<T>
+    public class SimpleCache<K, V> : ISimpleCache<K, V> where K : notnull
     {
-        private readonly ConcurrentDictionary<string, (T Value, DateTime? Expiration)> _cache = new();
+        private readonly ConcurrentDictionary<K, (V Value, DateTime? Expiration)> _cache = new();
 
-        public T? Get(string key)
+        public V? Get(K key)
         {
             if (_cache.TryGetValue(key, out var entry))
             {
@@ -15,7 +15,7 @@ namespace PoetryGlobal.Shared.MemoryCache
                     return entry.Value;
                 }
                 else {
-                    var keyValuePair = new KeyValuePair<string, (T Value, DateTime? Expiration)>
+                    var keyValuePair = new KeyValuePair<K, (V Value, DateTime? Expiration)>
                     (
                         key, 
                         entry
@@ -27,13 +27,13 @@ namespace PoetryGlobal.Shared.MemoryCache
             
         }
 
-        public void Set(string key, T value, TimeSpan? absoluteExpirationRelativeToNow = null)
+        public void Set(K key, V value, TimeSpan? absoluteExpirationRelativeToNow = null)
         {
             var expiration = absoluteExpirationRelativeToNow.HasValue ? DateTime.UtcNow.Add(absoluteExpirationRelativeToNow.Value) : (DateTime?)null;
             _cache[key] = (value, expiration);
         }
 
-        public bool Remove(string key)
+        public bool Remove(K key)
         {
             return _cache.TryRemove(key, out _);
         }

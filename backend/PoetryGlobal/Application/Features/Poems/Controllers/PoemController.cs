@@ -8,40 +8,48 @@ namespace PoetryGlobal.Features.Poems
     [ApiController]
     public class PoemController : ControllerBase
     {
-        private readonly IPoemOrchestration _poemService;
+        private readonly IPoemOrchestration _orchestration;
 
-        public PoemController(IPoemOrchestration poemService)
+        public PoemController(IPoemOrchestration orchestration)
         {
-            _poemService = poemService;
+            _orchestration = orchestration;
         }
 
-        [HttpGet("/id/{poemId:int}/language/{languageId:int}")]
+
+        [HttpGet("search/{title}/{author}")]
+        public async Task<ActionResult> PreparePagesAsync(string title, string author)
+        {
+            await _orchestration.PreparePagesAsync(title, author);
+            return Ok();
+        }
+
+        [HttpGet("page/{page:int}")]
+        public ActionResult GetPage(int page)
+        {
+            var poems = _orchestration.GetPage(page);
+            if (poems is null) return NotFound();
+            return Ok(new GetPageResponse { PoemMetadata = [.. poems] });
+        }
+
+        [HttpGet("poem/{poemId:int}/{languageId:int}")]
         public async Task<ActionResult> GetPoemAsync(int poemId, int languageId)
         {
-            try
-            {
-                var poems = await _poemService.GetPoemAsync(poemId, languageId);
-                return Ok(poems);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while processing your request. Error: {ex.Message}");
-            }
+            var poem = await _orchestration.GetPoemAsync(poemId, languageId);
+            if (poem is null) return NotFound();
+            return Ok(new GetPoemResponse { Poem = poem });
         }
 
 
-        [HttpGet("/database/title/{title:string}/author/{author:string}")]
-        public async Task<ActionResult> SearchPoemsAsync(string title, string author)
+
+        internal class GetPageResponse
         {
-            try
-            {
-                var poemMetadata = await _poemService.SearchPoemsAsync(title, author);
-                return Ok(poemMetadata);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while processing your request. Error: {ex.Message}");
-            }
+            public required List<PersistedPoemMetadata> PoemMetadata { get; set; }
         }
+
+        internal class GetPoemResponse
+        {
+            public required PersistedPoem Poem { get; set; }
+        }
+
     }
 }

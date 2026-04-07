@@ -10,7 +10,7 @@ namespace PoetryGlobal.Features.Auth
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController
+    public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
 
@@ -20,10 +20,15 @@ namespace PoetryGlobal.Features.Auth
         }
 
         [HttpGet("session-token")]
-        public string GetSessionToken()
+        public IActionResult GetSessionToken()
         {
-            return _authService.GenerateJwtToken();
+            return Ok(new GetSessionTokenResponse { Token = _authService.GenerateJwtToken() });
         }
 
+    }
+
+    internal class GetSessionTokenResponse
+    {
+        public required string Token { get; set; }    
     }
 }

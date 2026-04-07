@@ -17,16 +17,13 @@ namespace PoetryGlobal.Features.Poems
         [HttpGet]
         public async Task<ActionResult<List<Language>>> GetAllLanguagesAsync()
         {
-            try
-            {
-                var languages = await _languageService.GetAllLanguagesAsync();
-                return Ok(languages);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while processing your request. Error:{ex.Message}");
-            }
+            var languages = await _languageService.GetAllLanguagesAsync();
+            return Ok(new GetAllLanguagesResponse { languages = languages }); 
+        }
 
+        internal class GetAllLanguagesResponse
+        {
+            public required List<PersistedLanguage> languages { get; set; }
         }
     }
 }

@@ -11,13 +11,11 @@ namespace PoetryGlobal.Features.Poems
 
         public async Task<List<PersistedPoemMetadata>> SearchPoemsAsync(string titleQuery, string authorQuery)
         {
-            var query = _dataSource.CreateCommand(
-                @"
+            var query = _dataSource.CreateCommand(@"
                 SELECT id, title, author 
                 FROM poem_metadata 
-                WHERE title <% @titleQuery AND author <% @authorQuery
-                "
-            );
+                WHERE title <% @titleQuery AND author <% @authorQuery;
+            ");
             query.Parameters.AddWithValue("titleQuery", titleQuery);
             query.Parameters.AddWithValue("authorQuery", authorQuery);
 
@@ -36,15 +34,39 @@ namespace PoetryGlobal.Features.Poems
             return poemsMetadata;
         }
 
+        public async Task<PersistedPoem?> GetPoemOriginalAsync(int poemId)
+        {
+            var query = _dataSource.CreateCommand(@"
+                SELECT id, title, author, language_id, is_original, version_text
+                FROM poem_versions 
+                WHERE id = @poemId AND is_original = true
+            ");
+            query.Parameters.AddWithValue("poemId", poemId);
+
+            await using var reader = await query.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var poemVersion = new PersistedPoem
+                {
+                    Id = reader.GetInt32(0),
+                    Title = reader.GetString(1),
+                    Author = reader.GetString(2),
+                    LanguageId = reader.GetInt32(3),
+                    IsOriginal = reader.GetBoolean(4),
+                    VersionText = reader.GetString(5)
+                };
+                return poemVersion;
+            }
+            return null;
+        }
+
         public async Task<PersistedPoem?> GetPoemVersionAsync(int poemId, int languageId)
         {
-            var query = _dataSource.CreateCommand(
-                @"
-                SELECT id, title, author, language_id, is_original, content
+            var query = _dataSource.CreateCommand(@"
+                SELECT id, title, author, language_id, is_original, version_text
                 FROM poem_versions 
-                WHERE id = @poemId AND language_id = @languageId
-                "
-            );
+                WHERE id = @poemId AND language_id = @languageId;
+            ");
             query.Parameters.AddWithValue("poemId", poemId);
             query.Parameters.AddWithValue("languageId", languageId);
 
@@ -66,10 +88,12 @@ namespace PoetryGlobal.Features.Poems
         }
 
 
-        public async Task<List<PersistedPoemMetadata>> SavePoemOriginalsAsync(List<Poem> originalPoemVersions)
+        public async Task SavePoemOriginalsAsync(List<Poem> originalPoemVersions)
         {
             var query = _dataSource.CreateCommand();
-            var queryStringBuilder = new StringBuilder("INSERT INTO poem_versions (title, author, language_id, is_original, content) VALUES ");
+            var queryStringBuilder = new StringBuilder(@"
+                INSERT INTO poem_versions (title, author, language_id, is_original, version_text) VALUES
+            ");
             var sqlTupleStrings = new List<string>();
             for (int i = 0; i < originalPoemVersions.Count; i++)
             {
@@ -80,40 +104,26 @@ namespace PoetryGlobal.Features.Poems
                         $"Poem version at index {i} cannot be persisted. Ensure it has no Id and all required fields are set."
                     );
                 }
-                sqlTupleStrings.Add($"@title{i}, @author{i}, @languageId{i}, @isOriginal{i}, @content{i}");
+                sqlTupleStrings.Add($"@title{i}, @author{i}, @languageId{i}, @isOriginal{i}, @versionText{i}");
                 query.Parameters.AddWithValue($"title{i}", originalPoemVersion.Title);
                 query.Parameters.AddWithValue($"author{i}", originalPoemVersion.Author);
                 query.Parameters.AddWithValue($"languageId{i}", originalPoemVersion.LanguageId);
                 query.Parameters.AddWithValue($"isOriginal{i}", originalPoemVersion.IsOriginal);
-                query.Parameters.AddWithValue($"content{i}", originalPoemVersion.VersionText);
+                query.Parameters.AddWithValue($"versionText{i}", originalPoemVersion.VersionText);
             }
-            queryStringBuilder.Append(string.Join(", ", sqlTupleStrings)).Append(" RETURNING id, title, author;");
+            queryStringBuilder.Append(string.Join(", ", sqlTupleStrings)).Append(';');
             query.CommandText = queryStringBuilder.ToString();
 
-            await using var reader = await query.ExecuteReaderAsync();
-            var poemsMetadata = new List<PersistedPoemMetadata>();
-            while (await reader.ReadAsync())
-            {
-                var poem = new PersistedPoemMetadata
-                {
-                    Id = reader.GetInt32(0),
-                    Title = reader.GetString(1),
-                    Author = reader.GetString(2)
-                };
-                poemsMetadata.Add(poem);
-            }
-            return poemsMetadata;
-
+            await query.ExecuteNonQueryAsync();
         }
 
-        public async Task SavePoemVersionAsync(Poem poemVersion)
+        public async Task<PersistedPoem?> SavePoemVersionAsync(Poem poemVersion)
         {
-            var query = _dataSource.CreateCommand(
-                @"
-                INSERT INTO poem_versions (title, author, language_id, is_original, content) 
-                VALUES (@title, @author, @languageId, @isOriginal, @content)
-                "
-            );
+            var query = _dataSource.CreateCommand(@"
+                INSERT INTO poem_versions (title, author, language_id, is_original, version_text) 
+                VALUES (@title, @author, @languageId, @isOriginal, @versionText)
+                RETURNING id, title, author, language_id, is_original, version_text;
+            ");
             if (!poemVersion.CanBePersisted())
             {
                 throw new InvalidOperationException("Poem version cannot be persisted. Ensure it has no Id and all required fields are set.");
@@ -122,9 +132,23 @@ namespace PoetryGlobal.Features.Poems
             query.Parameters.AddWithValue("author", poemVersion.Author);
             query.Parameters.AddWithValue("languageId", poemVersion.LanguageId);
             query.Parameters.AddWithValue("isOriginal", poemVersion.IsOriginal);
-            query.Parameters.AddWithValue("content", poemVersion.VersionText);
+            query.Parameters.AddWithValue("versionText", poemVersion.VersionText);
 
-            await query.ExecuteNonQueryAsync();
+            await using var reader = await query.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var persistedPoem = new PersistedPoem
+                {
+                    Id = reader.GetInt32(0),
+                    Title = reader.GetString(1),
+                    Author = reader.GetString(2),
+                    LanguageId = reader.GetInt32(3),
+                    IsOriginal = reader.GetBoolean(4),
+                    VersionText = reader.GetString(5)
+                };
+                return persistedPoem;
+            }
+            return null;
         }
 
     }
