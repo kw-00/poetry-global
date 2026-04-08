@@ -48,7 +48,7 @@ namespace PoetryGlobal.Features.Poems
 
         internal class GetPoemResponse
         {
-            public required PersistedPoem Poem { get; set; }
+            public required PoemDTO Poem { get; set; }
         }
 
     }

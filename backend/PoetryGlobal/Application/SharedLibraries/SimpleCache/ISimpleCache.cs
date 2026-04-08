@@ -1,4 +1,4 @@
-namespace PoetryGlobal.Shared.SimpleCache
+namespace PoetryGlobal.SimpleCache
 {
     public interface ISimpleCache<K, V>
     {

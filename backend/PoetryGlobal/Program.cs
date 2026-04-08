@@ -1,9 +1,12 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using PoetryGlobal.Exceptions;
 using PoetryGlobal.Features.Auth;
 using PoetryGlobal.Features.Poems;
+using PoetryGlobal.Session;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +14,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddLogging();
+
+
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton(new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true,
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+});
+
 builder.Services.AddSingleton(_ =>
 {
     var connectionStringKey = "DB_CONNECTION_STRING";
@@ -21,15 +34,25 @@ builder.Services.AddSingleton(_ =>
     return NpgsqlDataSource.Create(connectionString);
 });
 
+
 // FEATURE: Auth
+builder.Services.AddScoped<ICurrentSession, PermissiveCurrentSession>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // FEATURE: Poems
+builder.Services.AddSingleton<ILanguageCache, LanguageCache>();
+builder.Services.AddSingleton<IPoemSearchCache, PoemSearchCache>();
+builder.Services.AddScoped<IScopedPoemSearchCacheProvider, ScopedPoemSearchCacheProvider>();
+
 builder.Services.AddScoped<ILanguageRepository, LanguageRepository>();
-builder.Services.AddScoped<IPoemRepository, PoemRepository>();
+builder.Services.AddScoped<IPoemMetadataRepository, PoemMetadataRepository>();
+builder.Services.AddScoped<IPoemVersionRepository, PoemVersionRepository>();
+
 builder.Services.AddScoped<IPoetryDbService, PoetryDbService>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
+
 builder.Services.AddScoped<IPoemOrchestration, PoemOrchestration>();
+
 
 builder.Services.AddControllers();
 
@@ -63,6 +86,22 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async context =>
+        {
+            context.Response.StatusCode = context.Features.Get<IExceptionHandlerFeature>()!.Error switch
+            {
+                UnauthorizedException => 401,
+                NotFoundException e => 404,
+                _ => 500
+            };
+            await context.Response.WriteAsync("Internal Server Error");
+        });
+    });
+}
 
 app.Run();
 

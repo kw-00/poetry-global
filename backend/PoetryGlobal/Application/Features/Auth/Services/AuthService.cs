@@ -24,14 +24,14 @@ namespace PoetryGlobal.Features.Auth
             var token = new JwtSecurityToken(
                 issuer: issuer,
                 expires: DateTime.UtcNow.AddMinutes(lifetimeMinutes),
-                signingCredentials: _GetSigningCredentials(),
+                signingCredentials: GetSigningCredentials(),
                 claims: claims
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private SigningCredentials _GetSigningCredentials()
+        private SigningCredentials GetSigningCredentials()
         {
             string secret = Environment.GetEnvironmentVariable("JWT_SECRET")
                 ?? throw new EnvironmentVariableNotSetException("JWT_SECRET");

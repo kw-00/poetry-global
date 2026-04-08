@@ -5,6 +5,6 @@ namespace PoetryGlobal.Features.Poems
     {
         Task PreparePagesAsync(string titleQuery, string authorQuery);
         PersistedPoemMetadata[] GetPage(int page);
-        Task<PersistedPoem> GetPoemAsync(int poemId, int languageId);
+        Task<PoemDTO> GetPoemAsync(int poemId, int languageId);
     }
 }

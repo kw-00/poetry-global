@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.StaticAssets;
 using Npgsql;
-using PoetryGlobal.Shared.SimpleCache;
+using PoetryGlobal.SimpleCache;
 
 namespace PoetryGlobal.Features.Poems
 {
@@ -8,24 +7,40 @@ namespace PoetryGlobal.Features.Poems
     {
         private static bool _isInitialized = false;
         private readonly NpgsqlDataSource _dataSource = dataSource;
-        private static readonly ISimpleCache<int, string> _cache = new SimpleCache<int, string>();
+        private readonly ISimpleCache<int, string> _idToCodeCache = new SimpleCache<int, string>(60 * 10);
+        private readonly ISimpleCache<string, int> _codeToIdCache = new SimpleCache<string, int>(60 * 10);
 
         public async Task<string?> GetLanguageCodeAsync(int languageId)
+        {
+            await InitializeCacheIfNeededAsync();
+            return _idToCodeCache.Get(languageId);
+        }
+
+        public async Task<int?> GetLanguageIdAsync(string languageCode)
+        {
+            await InitializeCacheIfNeededAsync();
+            return _codeToIdCache.Get(languageCode);
+        }
+
+        private async Task InitializeCacheIfNeededAsync()
         {
             if (!_isInitialized)
             {
                 var query = _dataSource.CreateCommand(@"
                     SELECT id, code 
                     FROM languages;
-               ");
-                using var reader = query.ExecuteReader();
+                ");
+
+                await using var reader = await query.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    _cache.Set(reader.GetInt32(0), reader.GetString(1), null);
+                    var id = reader.GetInt32(0);
+                    var code = reader.GetString(1);
+                    _idToCodeCache.Set(id, code, null);
+                    _codeToIdCache.Set(code, id, null);
                 }
                 _isInitialized = true;
             }
-            return _cache.Get(languageId);
         }
     }
 }

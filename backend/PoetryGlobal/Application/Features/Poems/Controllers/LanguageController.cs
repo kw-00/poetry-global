@@ -15,15 +15,15 @@ namespace PoetryGlobal.Features.Poems
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Language>>> GetAllLanguagesAsync()
+        public async Task<ActionResult<List<PersistedLanguage>>> GetAllLanguagesAsync()
         {
             var languages = await _languageService.GetAllLanguagesAsync();
-            return Ok(new GetAllLanguagesResponse { languages = languages }); 
+            return Ok(new GetAllLanguagesResponse { Languages = languages }); 
         }
 
         internal class GetAllLanguagesResponse
         {
-            public required List<PersistedLanguage> languages { get; set; }
+            public required List<PersistedLanguage> Languages { get; set; }
         }
     }
 }

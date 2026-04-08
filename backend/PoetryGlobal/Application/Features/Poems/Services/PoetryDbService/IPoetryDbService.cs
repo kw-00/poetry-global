@@ -3,6 +3,8 @@ namespace PoetryGlobal.Features.Poems
 {
     public interface IPoetryDbService
     {
-        Task<List<Poem>> GetPoemsAsync(string titleQuery, string authorQuery);
+        Task<List<(PoemMetadata PoemMetadata, PoemVersion PoemVersion)>> GetPoemsAsync(
+            string titleQuery, string authorQuery, int limit
+        );
     }
 }

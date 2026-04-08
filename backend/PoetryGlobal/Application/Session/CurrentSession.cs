@@ -1,14 +1,14 @@
 
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using PoetryGlobal.Exceptions;
 
-namespace PoetryGlobal.GlobalData.Session
+namespace PoetryGlobal.Session
 {
-    public class CurrentSession
+    public class CurrentSession : ICurrentSession
     {
         public required Guid Guid { get; init; }
 
-        public CurrentSession(HttpContextAccessor _httpContextAccessor)
+        public CurrentSession(IHttpContextAccessor _httpContextAccessor)
         {
             var httpContext = _httpContextAccessor.HttpContext;
 
@@ -23,7 +23,7 @@ namespace PoetryGlobal.GlobalData.Session
 
             if (sessionGuidClaim is null || !Guid.TryParse(sessionGuidClaim, out var sessionGuid))
             {
-                throw new ValidationException("Session GUID claim is missing or invalid.");
+                throw new UnauthorizedException("Session GUID claim is missing or invalid.");
             }
 
             Guid = sessionGuid;
