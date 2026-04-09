@@ -6,10 +6,9 @@ using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class PoemVersionRepository(NpgsqlDataSource dataSource, ILogger<PoemVersionRepository> logger) : IPoemVersionRepository
+    public class PoemVersionRepository(NpgsqlDataSource dataSource) : IPoemVersionRepository
     {
         private readonly NpgsqlDataSource _dataSource = dataSource;
-        private readonly ILogger<PoemVersionRepository> _logger = logger;
 
         public async Task<PersistedPoemVersion?> GetAsync(int poemMetadataId, int languageId)
         {
@@ -130,7 +129,7 @@ namespace PoetryGlobal.Features.Poems
                     VersionText = reader.GetString(3)
                 };
             }
-            throw new ResultsetUnexpectedlyMissingException(
+            throw new ResultSetUnexpectedlyMissingException(
                 "Poem version unexpectedly missing from query reader."
             );
         }

@@ -19,7 +19,7 @@ namespace PoetryGlobal.Features.Poems
             return _cache.Get(_currentSession.Guid);
         }
 
-        public void SetSearchCache(List<PersistedPoemMetadata> poemMetadata)
+        public int SetSearchCache(List<PersistedPoemMetadata> poemMetadata)
         {
             var pageSizeKey = "Features:Poems:PageSize";
             var pageSize = int.Parse(
@@ -33,7 +33,9 @@ namespace PoetryGlobal.Features.Poems
                     ?? throw new AppSettingsKeyNotFoundException(pageLifetimeKey)
             );
 
+            var searchPages = new SearchPages(poemMetadata, pageSize);
             _cache.Set(_currentSession.Guid, new SearchPages(poemMetadata, pageSize), TimeSpan.FromSeconds(pageLifetimeSeconds));
+            return searchPages.PageCount;
         }
     }
 }

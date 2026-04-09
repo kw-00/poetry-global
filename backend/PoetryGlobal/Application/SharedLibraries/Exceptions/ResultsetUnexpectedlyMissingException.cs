@@ -1,6 +1,6 @@
 namespace PoetryGlobal.Exceptions
 {
-    public class ResultsetUnexpectedlyMissingException(string message) : Exception(message)
+    public class ResultSetUnexpectedlyMissingException(string message) : Exception(message)
     {
     }
 }

@@ -4,9 +4,8 @@ using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class PoemMetadataRepository(NpgsqlDataSource dataSource, ILogger<PoemMetadataRepository> logger) : IPoemMetadataRepository
+    public class PoemMetadataRepository(NpgsqlDataSource dataSource) : IPoemMetadataRepository
     {
-        private readonly ILogger<PoemMetadataRepository> _logger = logger;
         private readonly NpgsqlDataSource _dataSource = dataSource;
         public async Task<List<PersistedPoemMetadata>> SearchAsync(
             string titleQuery, string authorQuery, int limit
@@ -94,7 +93,7 @@ namespace PoetryGlobal.Features.Poems
                     Author = reader.GetString(2)
                 };
             }
-            throw new ResultsetUnexpectedlyMissingException("Poem metadata unexpectedly missing from query reader.");
+            throw new ResultSetUnexpectedlyMissingException("Poem metadata unexpectedly missing from query reader.");
         }
 
         public async Task<List<PersistedPoemMetadata>> UpsertAllAsync(List<PoemMetadata> poemsMetadata)

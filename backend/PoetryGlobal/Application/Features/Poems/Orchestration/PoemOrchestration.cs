@@ -34,7 +34,7 @@ namespace PoetryGlobal.Features.Poems
                 ?? throw new AppSettingsKeyNotFoundException(_poetryDbSearchBatchSizeKey)
         );
 
-        public async Task PreparePagesAsync(string titleQuery, string authorQuery)
+        public async Task<int> PreparePagesAsync(string titleQuery, string authorQuery)
         {
             List<PersistedPoemMetadata> metadataFromDatabaseSearch 
                 = await _poemMetadataRepository.SearchAsync(
@@ -68,7 +68,7 @@ namespace PoetryGlobal.Features.Poems
                 metadataFromPoetryDbPersisted = persistedMetadata;
             }
 
-            _poemSearchCache.SetSearchCache([.. 
+            return _poemSearchCache.SetSearchCache([.. 
                 metadataFromDatabaseSearch.UnionBy(metadataFromPoetryDbPersisted, m => m.Id)
             ]);
         }
@@ -90,7 +90,7 @@ namespace PoetryGlobal.Features.Poems
             if (poemVersion is not null) return new PoemDTO(poemMetadata, poemVersion);
 
             var originalVersion = await _poemVersionRepository.GetOriginalAsync(poemMetadataId) 
-                ?? throw new ModelNotPersistableException("Original poem could not be found.");
+                ?? throw new NotFoundException("Original poem could not be found.");
 
             var sourceLanguage = await _languageCache.GetLanguageCodeAsync(originalVersion.LanguageId) 
                 ?? throw new NotFoundException($"Language with ID of {originalVersion.LanguageId} was not found.");

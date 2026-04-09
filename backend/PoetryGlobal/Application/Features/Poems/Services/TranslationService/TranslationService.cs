@@ -1,9 +1,11 @@
+using System.Text.Json;
 using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class TranslationService(HttpClient httpClient,IConfiguration configuration) : ITranslationService
+    public class TranslationService(HttpClient httpClient, IConfiguration configuration, JsonSerializerOptions jsonSerializerOptions) : ITranslationService
     {
+        private readonly JsonSerializerOptions _jsonSerializerOptions = jsonSerializerOptions;
         private readonly HttpClient _httpClient = httpClient;
         private static readonly string _myMemoryBaseUrlKey = "ExternalApis:MyMemory:BaseUrl";
         private readonly string _myMemoryBaseUrl = configuration[_myMemoryBaseUrlKey] 
@@ -20,13 +22,13 @@ namespace PoetryGlobal.Features.Poems
             {
                 var escapedSourceLanguage = Uri.EscapeDataString(sourceLanguage);
                 var escapedTargetLanguage = Uri.EscapeDataString(targetLanguage);
-                var url = $"{_myMemoryBaseUrl}get?q={poemLinesMerged}&langpair={escapedSourceLanguage}|{escapedTargetLanguage}";
+                var url = $"{_myMemoryBaseUrl}/get?q={line}&langpair={escapedSourceLanguage}|{escapedTargetLanguage}";
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
                 requestMessage.Headers.Remove("Accept");
                 requestMessage.Headers.Add("Accept", "application/json");
                 var response = await _httpClient.SendAsync(requestMessage);
                 response.EnsureSuccessStatusCode();
-                var responseObject = await response.Content.ReadFromJsonAsync<MyMemoryResponse>() 
+                var responseObject = await response.Content.ReadFromJsonAsync<MyMemoryResponse>(_jsonSerializerOptions) 
                     ?? throw new NullReferenceException("Deserialized response is null.");
 
                 targetLines.Add(responseObject.ResponseData.TranslatedText);
