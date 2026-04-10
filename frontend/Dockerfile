@@ -4,10 +4,10 @@ WORKDIR /app/poetry-global-frontend
 
 # install deps (cached)
 COPY ./poetry-global-frontend/package.json poetry-global-frontend/package-lock.json* ./
-RUN npm install
+RUN npm install --force
 
 # copy rest of the app
-COPY poetry-global-frontend/ .
+COPY poetry-global-frontend/ /app
 
 # Vite dev server port
 EXPOSE 5173
