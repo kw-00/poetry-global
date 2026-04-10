@@ -5,9 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using PoetryGlobal.ConfigWithParsing;
 using PoetryGlobal.Exceptions;
-using PoetryGlobal.Features.Auth;
 using PoetryGlobal.Features.Poems;
-using PoetryGlobal.Session;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,11 +34,6 @@ builder.Services.AddSingleton(_ =>
 });
 
 builder.Services.AddSingleton<IConfigWithValidation, ConfigWithParsing>();
-
-
-// FEATURE: Auth
-builder.Services.AddScoped<ICurrentSession, CurrentSession>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 
 // FEATURE: Poems
 builder.Services.AddSingleton<ILanguageCache, LanguageCache>();
