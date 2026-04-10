@@ -3,7 +3,7 @@ using PoetryGlobal.Interfaces;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class PoemVersion : IPotentiallyPersistable
+    public class PoemVersion : IModel
     {
         public int? PoemMetadataId { get; init; }
         public int? LanguageId { get; init; }

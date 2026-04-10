@@ -5,7 +5,7 @@ using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Auth
 {
-    public class AuthService(IConfiguration configuration) : IAuthService
+    public class TokenService(IConfiguration configuration) : ITokenService
     {
         private readonly IConfiguration _configuration = configuration;
 

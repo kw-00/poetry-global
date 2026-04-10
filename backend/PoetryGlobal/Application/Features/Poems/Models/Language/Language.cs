@@ -3,7 +3,7 @@ using PoetryGlobal.Interfaces;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class Language : IPotentiallyPersistable
+    public class Language : IModel
     {
         public int? Id { get; init; }
         public required string Code { get; init; }

@@ -7,7 +7,7 @@ namespace PoetryGlobal.Interfaces
     /// has a NOT NULL constraint on are not null on the model,
     /// and the model does not have a primary key set.
     /// </summary>
-    public interface IPotentiallyPersistable
+    public interface IModel
     {
         bool CanBePersisted();
     }

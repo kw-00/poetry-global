@@ -10,21 +10,15 @@ namespace PoetryGlobal.Features.Poems
     public interface IPoemOrchestration
     {
         /// <summary>
-        /// Prepares pages of poem metadata based on a search query
-        /// and caches them in application memory for later retrieval.
-        /// Cached pages may expire after.
+        /// Performs a search for poem metadata and stores the results in the cache.
+        /// Then returns the number of pages and a chosen page or null if it cannot be found.
+        /// 
+        /// If the search query has already been cached, it uses the existing cache.
         /// </summary>
-        /// <param name="titleQuery">Poem title or part of title.</param>
-        /// <param name="authorQuery">Poem author or part of author name.</param>
-        /// <returns>The number of pages cached.</returns>
-        Task<int> PreparePagesAsync(string titleQuery, string authorQuery);
-
-        /// <summary>
-        /// Retrieves a page of poem metadata from the cache.
-        /// </summary>
+        /// <param name="query">Object representation of the search query.</param>
         /// <param name="pageNumber">Zero-indexed page number.</param>
-        /// <returns>An array of poem metadata corresponding to <paramref name="pageNumber"/>.</returns>
-        PersistedPoemMetadata[] GetPage(int pageNumber);
+        /// <returns>The number of pages and a chosen page.</returns>
+        Task<(int PageCount, List<PersistedPoemMetadata> Page)> SearchAsync(SearchQueryDTO query, int pageNumber);
 
         /// <summary>
         /// Retrieves a poem version in the specified language from the database or attempts

@@ -8,6 +8,7 @@ CREATE SCHEMA IF NOT EXISTS app;
 
 SET search_path TO app;
 
+
 CREATE TABLE IF NOT EXISTS languages (
     id SERIAL PRIMARY KEY,
     code TEXT NOT NULL UNIQUE
@@ -20,9 +21,6 @@ CREATE TABLE IF NOT EXISTS poem_metadata (
     author TEXT NOT NULL
 );
 
-ALTER TABLE poem_metadata ADD CONSTRAINT unique_title_author UNIQUE (title, author);
-
-
 CREATE TABLE IF NOT EXISTS poem_versions (
     poem_metadata_id INT NOT NULL,
     language_id INT NOT NULL,
@@ -31,6 +29,7 @@ CREATE TABLE IF NOT EXISTS poem_versions (
     PRIMARY KEY (poem_metadata_id, language_id)
 );
 
+ALTER TABLE poem_metadata ADD CONSTRAINT unique_title_author UNIQUE (title, author);
 
 ALTER TABLE poem_versions ADD CONSTRAINT fk_poem_metadata
     FOREIGN KEY (poem_metadata_id) REFERENCES poem_metadata(id) 
@@ -45,45 +44,40 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_one_original_per_poem
 ON poem_versions (poem_metadata_id)
 WHERE is_original = true;
 
-/** 
-Languages are searched solely by ID equality. I set a hash index on `languages.id`, 
-as it provides O(1) lookups for such searches. The languages table is practically read-only,
-which is why the cost of maintaining the hash index is negligible.
 
-The advantage is yet to be verified, however, as B-tree indexes have superior optimizer support 
-and scale fairly well despite the higher time complexity.
-*/
-CREATE INDEX IF NOT EXISTS idx_languages_id ON languages USING HASH (id);
-
-
-/** For keyword-based searches of `poems` by `author` and `title`, I set up trigram indexes on these columns. */ 
+/** For trigram-based searches of `poems` by `author` and `title`, I set up trigram indexes on these columns. */ 
 CREATE INDEX IF NOT EXISTS idx_poems_author ON poem_metadata USING GIN (author public.gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS idx_poems_title ON poem_metadata USING GIN (title public.gin_trgm_ops);
 
+/** Setting pg_trgm parameters for reasonably lax similarity thresholds */
+ALTER DATABASE poetryglobal SET pg_trgm.strict_word_similarity_threshold TO 0.3;
+ALTER DATABASE poetryglobal SET pg_trgm.word_similarity_threshold TO 0.3;
+ALTER DATABASE poetryglobal SET pg_trgm.similarity_threshold TO 0.2;
+
 /** Initialize language codes */
 INSERT INTO languages (code) VALUES
-('en'),
-('es'),
-('fr'),
-('de'),
-('it'),
-('pt'),
-('ru'),
-('zh'),
-('ja'),
-('ko'),
-('ar'),
-('hi'),
-('pl'),
-('nl'),
-('sv'),
-('no'),
-('da'),
-('fi'),
-('tr'),
-('cs'),
-('sk'),
-('uk')
-ON CONFLICT (code) DO NOTHING;
+    ('en'),
+    ('es'),
+    ('fr'),
+    ('de'),
+    ('it'),
+    ('pt'),
+    ('ru'),
+    ('zh'),
+    ('ja'),
+    ('ko'),
+    ('ar'),
+    ('hi'),
+    ('pl'),
+    ('nl'),
+    ('sv'),
+    ('no'),
+    ('da'),
+    ('fi'),
+    ('tr'),
+    ('cs'),
+    ('sk'),
+    ('uk')
+;
 
 RESET search_path;

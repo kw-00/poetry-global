@@ -7,8 +7,8 @@ namespace PoetryGlobal.Features.Poems
     {
         private static bool _isInitialized = false;
         private readonly NpgsqlDataSource _dataSource = dataSource;
-        private readonly ISimpleCache<int, string> _idToCodeCache = new SimpleCache<int, string>(60 * 10);
-        private readonly ISimpleCache<string, int> _codeToIdCache = new SimpleCache<string, int>(60 * 10);
+        private readonly ISimpleCache<int, string> _idToCodeCache = new SimpleCache<int, string>();
+        private readonly ISimpleCache<string, int> _codeToIdCache = new SimpleCache<string, int>();
 
         public async Task<string?> GetLanguageCodeAsync(int languageId)
         {
@@ -36,8 +36,8 @@ namespace PoetryGlobal.Features.Poems
                 {
                     var id = reader.GetInt32(0);
                     var code = reader.GetString(1);
-                    _idToCodeCache.Set(id, code, null);
-                    _codeToIdCache.Set(code, id, null);
+                    _idToCodeCache.Set(id, code);
+                    _codeToIdCache.Set(code, id);
                 }
                 _isInitialized = true;
             }

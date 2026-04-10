@@ -1,15 +1,15 @@
 using System.Text.Json;
+using PoetryGlobal.ConfigWithParsing;
 using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class TranslationService(HttpClient httpClient, IConfiguration configuration, JsonSerializerOptions jsonSerializerOptions) : ITranslationService
+    public class TranslationService(HttpClient httpClient, IConfigWithValidation configuration, JsonSerializerOptions jsonSerializerOptions) : ITranslationService
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions = jsonSerializerOptions;
         private readonly HttpClient _httpClient = httpClient;
-        private static readonly string _myMemoryBaseUrlKey = "ExternalApis:MyMemory:BaseUrl";
-        private readonly string _myMemoryBaseUrl = configuration[_myMemoryBaseUrlKey] 
-            ?? throw new AppSettingsKeyNotFoundException(_myMemoryBaseUrlKey);
+        private readonly string _myMemoryBaseUrl 
+            = configuration.GetFromConfigOrThrow<string>("ExternalApis:MyMemory:BaseUrl");
 
         public async Task<string> TranslatePoemAsync(
             string poemLinesMerged, string sourceLanguage, string targetLanguage

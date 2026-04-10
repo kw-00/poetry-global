@@ -9,7 +9,7 @@ namespace PoetryGlobal.Features.Poems
     /// Provides thread-safe read/write access as well as simple eviction policy
     /// (check <see cref="ISimpleCache{K, V}"/>).
     /// </summary>
-    public interface IPoemSearchCache : ISimpleCache<Guid, ISearchPages>;
+    public interface IPoemSearchCache : ISimpleCache<SearchQueryDTO, ISearchPages>;
 
     /// <summary>
     /// Represents a set of pages that correspond to a single search query.

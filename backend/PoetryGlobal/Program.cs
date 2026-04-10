@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
+using PoetryGlobal.ConfigWithParsing;
 using PoetryGlobal.Exceptions;
 using PoetryGlobal.Features.Auth;
 using PoetryGlobal.Features.Poems;
@@ -34,21 +35,22 @@ builder.Services.AddSingleton(_ =>
     return NpgsqlDataSource.Create(connectionString);
 });
 
+builder.Services.AddSingleton<IConfigWithValidation, ConfigWithParsing>();
+
 
 // FEATURE: Auth
-builder.Services.AddScoped<ICurrentSession, PermissiveCurrentSession>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICurrentSession, CurrentSession>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // FEATURE: Poems
 builder.Services.AddSingleton<ILanguageCache, LanguageCache>();
 builder.Services.AddSingleton<IPoemSearchCache, PoemSearchCache>();
-builder.Services.AddScoped<IScopedPoemSearchCacheProvider, ScopedPoemSearchCacheProvider>();
 
 builder.Services.AddScoped<ILanguageRepository, LanguageRepository>();
 builder.Services.AddScoped<IPoemMetadataRepository, PoemMetadataRepository>();
 builder.Services.AddScoped<IPoemVersionRepository, PoemVersionRepository>();
 
-builder.Services.AddScoped<IPoetryDbService, PoetryDbService>();
+builder.Services.AddScoped<IExternalPoetryAPIService, PoetryDbService>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 
 builder.Services.AddScoped<IPoemOrchestration, PoemOrchestration>();
@@ -69,6 +71,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Cookies["SessionToken"];
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 

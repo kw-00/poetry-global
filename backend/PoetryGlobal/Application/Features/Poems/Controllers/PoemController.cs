@@ -16,29 +16,21 @@ namespace PoetryGlobal.Features.Poems
         }
 
 
-        [HttpGet("search/{title}/{author}")]
-        public async Task<ActionResult> PreparePagesAsync(string title, string author)
+        [HttpGet("search")]
+        public async Task<ActionResult> Search(string title, string author, int page)
         {
-            await _orchestration.PreparePagesAsync(title, author);
-            return Ok();
+            var query = new SearchQueryDTO(title, author);
+            var result = await _orchestration.SearchAsync(query, page);
+            return Ok(new GetPageResponse { PoemMetadata = result.Page });
         }
 
-        [HttpGet("page/{page:int}")]
-        public ActionResult GetPage(int page)
-        {
-            var poems = _orchestration.GetPage(page);
-            if (poems is null) return NotFound();
-            return Ok(new GetPageResponse { PoemMetadata = [.. poems] });
-        }
-
-        [HttpGet("poem/{poemId:int}/{languageId:int}")]
+        [HttpGet("{poemId:int}/{languageId:int}")]
         public async Task<ActionResult> GetPoemAsync(int poemId, int languageId)
         {
             var poem = await _orchestration.GetPoemAsync(poemId, languageId);
             if (poem is null) return NotFound();
             return Ok(new GetPoemResponse { Poem = poem });
         }
-
 
 
         internal class GetPageResponse

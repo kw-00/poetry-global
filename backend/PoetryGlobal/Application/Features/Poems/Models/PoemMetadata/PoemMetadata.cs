@@ -2,7 +2,7 @@ using PoetryGlobal.Interfaces;
 
 namespace PoetryGlobal.Features.Poems
 {
-    public class PoemMetadata : IPotentiallyPersistable
+    public class PoemMetadata : IModel
     {
         public int? Id { get; init; }
         public required string Title { get; init; }

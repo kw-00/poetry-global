@@ -8,7 +8,7 @@ namespace PoetryGlobal.Features.Poems
     {
         private readonly NpgsqlDataSource _dataSource = dataSource;
         public async Task<List<PersistedPoemMetadata>> SearchAsync(
-            string titleQuery, string authorQuery, int limit
+            SearchQueryDTO searchQuery, int limit
         )
         {
             var query = _dataSource.CreateCommand(@"
@@ -17,15 +17,13 @@ namespace PoetryGlobal.Features.Poems
                 WHERE (title <% @titleQuery OR title % @titleQuery) 
                     AND (author <% @authorQuery OR author % @authorQuery) 
                 ORDER BY 
-                    word_similarity(@titleQuery, title),
-                    similarity(@titleQuery, title),
-                    word_similarity(@authorQuery, author),
-                    similarity(@authorQuery, author)
+                    word_similarity(@titleQuery, title)
+                    + similarity(@titleQuery, title)
                 DESC
                 LIMIT @limit;
             ");
-            query.Parameters.AddWithValue("titleQuery", titleQuery);
-            query.Parameters.AddWithValue("authorQuery", authorQuery);
+            query.Parameters.AddWithValue("titleQuery", searchQuery.Title);
+            query.Parameters.AddWithValue("authorQuery", searchQuery.Author);
             query.Parameters.AddWithValue("limit", limit);
 
             await using var reader = await query.ExecuteReaderAsync();
@@ -127,6 +125,17 @@ namespace PoetryGlobal.Features.Poems
                 });
             }
             return resultPoemMetadata;
+        }
+
+
+        public async Task DeleteAsync(int id)
+        {
+            var query = _dataSource.CreateCommand(@"
+                DELETE FROM poem_metadata 
+                WHERE id = @id;
+            ");
+            query.Parameters.AddWithValue("id", id);
+            await query.ExecuteNonQueryAsync();
         }
     }
 }

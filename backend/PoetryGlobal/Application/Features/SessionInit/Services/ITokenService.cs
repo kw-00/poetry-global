@@ -3,7 +3,7 @@
 
 namespace PoetryGlobal.Features.Auth
 {
-    public interface IAuthService
+    public interface ITokenService
     {
         string GenerateJwtToken();
     }

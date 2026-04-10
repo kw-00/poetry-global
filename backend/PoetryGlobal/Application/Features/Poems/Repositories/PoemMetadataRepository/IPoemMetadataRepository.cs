@@ -8,11 +8,10 @@ namespace PoetryGlobal.Features.Poems
         /// <summary>
         /// Performs a trigram-based search for poem metadata.
         /// </summary>
-        /// <param name="titleQuery">The poem's title or a similar string.</param>
-        /// <param name="authorQuery">The poem's author or a similar string.</param>
+        /// <param name="searchQuery">Object representation of the search query.</param>
         /// <param name="limit">The maximum number of records to return.</param>
         /// <returns>A list of poem metadata.</returns>
-        Task<List<PersistedPoemMetadata>> SearchAsync(string titleQuery, string authorQuery, int limit);
+        Task<List<PersistedPoemMetadata>> SearchAsync(SearchQueryDTO searchQuery, int limit);
 
         /// <summary>
         /// Retrieves a poem metadata record by its ID.
@@ -41,5 +40,11 @@ namespace PoetryGlobal.Features.Poems
         /// Thrown when a poem metadata model cannot be upserted due to it not being persistable.
         /// </exception>
         Task<List<PersistedPoemMetadata>> UpsertAllAsync(List<PoemMetadata> poemMetadata);
+
+        /// <summary>
+        /// Deletes a poem metadata record by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the poem metadata record to delete.</param>
+        Task DeleteAsync(int id);
     }
 }

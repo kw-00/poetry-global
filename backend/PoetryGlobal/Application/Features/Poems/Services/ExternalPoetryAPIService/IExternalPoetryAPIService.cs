@@ -1,8 +1,17 @@
 
 namespace PoetryGlobal.Features.Poems
 {
-    public interface IPoetryDbService
+    public interface IExternalPoetryAPIService
     {
+        /// <summary>
+        /// Retrieves poem metadata from an external API.
+        /// </summary>
+        /// <param name="query">Object representation of the search query.</param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        Task<List<PoemMetadata>> GetPoemMetadataAsync(
+            SearchQueryDTO query, int limit
+        );
         /// <summary>
         /// Retrieves poems from an external API.
         /// </summary>
@@ -11,7 +20,9 @@ namespace PoetryGlobal.Features.Poems
         /// <param name="limit">Maximum number of poems to retrieve.</param>
         /// <returns></returns>
         Task<List<(PoemMetadata PoemMetadata, PoemVersion PoemVersion)>> GetPoemsAsync(
-            string titleQuery, string authorQuery, int limit
+            SearchQueryDTO query, int limit
         );
+
+
     }
 }
