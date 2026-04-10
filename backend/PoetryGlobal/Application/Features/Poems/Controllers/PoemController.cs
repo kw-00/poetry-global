@@ -17,11 +17,16 @@ namespace PoetryGlobal.Features.Poems
 
 
         [HttpGet("search")]
-        public async Task<ActionResult> Search(string title, string author, int page)
+        public async Task<ActionResult> Search(string title, string? author, int page)
         {
             var query = new SearchQueryDTO(title, author);
             var result = await _orchestration.SearchAsync(query, page);
-            return Ok(new GetPageResponse { PoemMetadata = result.Page });
+            return Ok(new GetPageResponse 
+                { 
+                    PoemMetadata = result.Page,
+                    PageCount = result.PageCount 
+                }
+            );
         }
 
         [HttpGet("{poemId:int}/{languageId:int}")]
@@ -36,6 +41,7 @@ namespace PoetryGlobal.Features.Poems
         internal class GetPageResponse
         {
             public required List<PersistedPoemMetadata> PoemMetadata { get; set; }
+            public required int PageCount { get; set; }
         }
 
         internal class GetPoemResponse
