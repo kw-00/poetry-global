@@ -1,4 +1,4 @@
-using PoetryGlobal.ConfigWithParsing;
+using PoetryGlobal.SharedDIDependencies;
 using PoetryGlobal.Exceptions;
 using PoetryGlobal.SimpleCache;
 

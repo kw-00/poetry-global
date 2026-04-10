@@ -1,6 +1,6 @@
 using PoetryGlobal.Exceptions;
 
-namespace PoetryGlobal.ConfigWithParsing
+namespace PoetryGlobal.SharedDIDependencies
 {
     /// <summary>
     /// IConfigWithValidation implementation that uses injected IConfiguration to get configuration variables.

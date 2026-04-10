@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using PoetryGlobal.ConfigWithParsing;
+using PoetryGlobal.SharedDIDependencies;
 using PoetryGlobal.Exceptions;
 using PoetryGlobal.Features.Poems;
 

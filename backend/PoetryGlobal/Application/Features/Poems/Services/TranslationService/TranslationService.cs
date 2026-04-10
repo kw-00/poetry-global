@@ -1,5 +1,5 @@
 using System.Text.Json;
-using PoetryGlobal.ConfigWithParsing;
+using PoetryGlobal.SharedDIDependencies;
 using PoetryGlobal.Exceptions;
 
 namespace PoetryGlobal.Features.Poems

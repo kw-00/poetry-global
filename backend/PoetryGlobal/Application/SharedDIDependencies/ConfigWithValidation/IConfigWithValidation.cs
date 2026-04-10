@@ -1,4 +1,4 @@
-namespace PoetryGlobal.ConfigWithParsing
+namespace PoetryGlobal.SharedDIDependencies
 {
     /// <summary>
     /// Provides methods for comfortable parsing of configuration and environment variables.
