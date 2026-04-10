@@ -18,7 +18,7 @@ namespace PoetryGlobal.Features.Poems
             var sourceLines = poemLinesMerged.Split("\n");
             var targetLines = new List<string>();
 
-            foreach (var line in sourceLines) 
+            foreach (var line in sourceLines.ToList().GetRange(0, 1)) // Linijka dodana dla ułatwienia testowania
             {
                 var escapedSourceLanguage = Uri.EscapeDataString(sourceLanguage);
                 var escapedTargetLanguage = Uri.EscapeDataString(targetLanguage);
