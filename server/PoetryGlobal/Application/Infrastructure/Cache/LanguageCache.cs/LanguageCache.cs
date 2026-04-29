@@ -1,5 +1,4 @@
 using Npgsql;
-using PoetryGlobal.SimpleCache;
 
 namespace PoetryGlobal.Infrastructure
 {

@@ -1,5 +1,4 @@
-using PoetryGlobal.Infrastructure;
-using PoetryGlobal.SimpleCache;
+
 
 namespace PoetryGlobal.Infrastructure
 {

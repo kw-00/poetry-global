@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using PoetryGlobal.Interfaces;
 
 namespace PoetryGlobal.Infrastructure
 {

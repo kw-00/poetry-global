@@ -93,8 +93,6 @@ Ponadto, baza danych została zaprojektowana by umożliwić wyszukiwanie oparte 
     - **Models** — obiekty odpowiadające rekordom w bazie danych. Dzielą się one na zwykłe modele (`IModel`), które mogą być niekompletne i możliwie nie zostały jeszcze utrwalone w bazie danych, oraz modele utrwalone (`IPersistedModel`), które reprezentują rekordy pobrane z bazy danch.
     - **DTOs** — obiekty danych służące do usprawnienie przepływu danych między serwisami/warstwami aplikacji oraz klientami.
 
-- **SharedLibraries**. Zawiera on wszelkie biblioteki używane przez pozostałe elementy aplikacji.
-
 - **Config** zawiera klasy pomocnicze związane z konfiguracją aplikacji.
 
 **[Program.cs](./backend/PoetryGlobal/Program.cs)** — program konfigurujący oraz uruchamiający serwer.

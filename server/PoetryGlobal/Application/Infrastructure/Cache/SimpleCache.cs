@@ -1,7 +1,7 @@
-using System.Collections.Concurrent;
+
 using Microsoft.Extensions.Caching.Memory;
 
-namespace PoetryGlobal.SimpleCache
+namespace PoetryGlobal.Infrastructure
 {
     public class SimpleCache<K, V> : ISimpleCache<K, V>, IDisposable where K : notnull
     {

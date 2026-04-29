@@ -1,4 +1,4 @@
-namespace PoetryGlobal.Interfaces
+namespace PoetryGlobal.Infrastructure
 {
     /// <summary>
     /// Represents models that do not necessarily come from the database

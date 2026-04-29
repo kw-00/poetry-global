@@ -1,4 +1,4 @@
-namespace PoetryGlobal.Interfaces
+namespace PoetryGlobal.Infrastructure
 {
     /// <summary>
     /// A marker interface for models that come from the database.
