@@ -80,7 +80,7 @@ Ponadto, baza danych została zaprojektowana by umożliwić wyszukiwanie oparte 
 ## Wybrane foldery oraz pliki
 **[compose.yml](./compose.yml)** — służy do koordynacji budowania oraz uruchomienia kontenerów zawierających bazę danych oraz serwer.
 
-**[backend/PoetryGlobal](./backend/PoetryGlobal/)** — tutaj znajduje się większość implementacji serwera. Zawiera on następujące foldery:
+**[server/PoetryGlobal](./server/PoetryGlobal/)** — tutaj znajduje się większość implementacji serwera. Zawiera on następujące foldery:
 - **Infrastructure** — tutaj umieszczone są klasy związane z infrastrukturą aplikacji. Istnieje to kilka sekcji, według których podzieliłem implementację:
     - **Repositories** — obiekty umożliwiające łatwy dostęp do bazy danych. Każde *repository* reprezentuje jakąś tabelę w bazie.
     - **Cache** — cache przechowywane w pamięci aplikacji, wspierające dostęp z wielu wątków.
@@ -107,7 +107,7 @@ Aplikacja jest gotowa do deploymentu. Zalecam jednak wykonać kilka rzeczy przed
 - Warto przygotować serwer pośredniczący między aplikacją a Internetem (np. nginx)
 - Należy skonfigurować ograniczenia dotyczące ilości zapytań z jednego źródła (rate limiting).
 ASP.NET posiada już wbudowaną funkcjonalność — wystarczy ją dodać w pliku [Program.cs](./backend/PoetryGlobal/Program.cs).
-- Aby aplikacja zachowywała się lepiej przy dużym obciążeniu, należy skonfigurować jakąś formę zabezpieczenia. Może to być coś prostego, na przykład semafor ograniczający liczbę obsługiwanych zapytań
+- Aby aplikacja zachowywała się lepiej przy dużym obciążeniu, należy skonfigurować jakąś formę zabezpieczenia. Może to być coś prostego, na przykład semafor ograniczający liczbę obsługiwanych zapytań.
     
 
 
