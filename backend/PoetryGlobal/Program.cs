@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using PoetryGlobal.SharedDIDependencies;
+using PoetryGlobal.Config;
 using PoetryGlobal.Exceptions;
-using PoetryGlobal.Features.Poems;
+using PoetryGlobal.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +44,7 @@ builder.Services.AddScoped<IPoemMetadataRepository, PoemMetadataRepository>();
 builder.Services.AddScoped<IPoemVersionRepository, PoemVersionRepository>();
 
 builder.Services.AddScoped<IExternalPoetryAPIService, PoetryDbService>();
-builder.Services.AddScoped<ITranslationService, TranslationService>();
+builder.Services.AddScoped<ITranslationService, LimitedMyMemoryTranslationService>();
 
 builder.Services.AddScoped<IPoemOrchestration, PoemOrchestration>();
 

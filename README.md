@@ -1,14 +1,4 @@
 
-<span style="font-size: 1.1rem; font-weight: bold;opacity:0.8"> Uwaga</span>
-
-<span style="opacity:0.8">Dodałem drobną zmianę w pliku [TranslationService](./backend/PoetryGlobal/Application/Features/Poems/Services/TranslationService/TranslationService.cs).</span>
-```cs
-foreach (var line in sourceLines) // Przed
-foreach (var line in sourceLines.ToList().GetRange(0, 1)) // Po
-```
-<span style="opacity:0.8">Chodzi o to, by serwis tłumaczył tylko jedną linijkę wiersza dla celów demonstracyjnych. Tłumaczenie całego wiersza łatwo prowadzi do przekroczenia limitów ze strony API wykorzystywanego do tłumaczeń.</span>
-
-
 # Poetry Global
 
 Aplikacja udostępniająca poezję angielską w szerokiej gamie języków.
@@ -91,11 +81,12 @@ Ponadto, baza danych została zaprojektowana by umożliwić wyszukiwanie oparte 
 **[compose.yml](./compose.yml)** — służy do koordynacji budowania oraz uruchomienia kontenerów zawierających bazę danych oraz serwer.
 
 **[backend/PoetryGlobal](./backend/PoetryGlobal/)** — tutaj znajduje się większość implementacji serwera. Zawiera on następujące foldery:
-- **Features/Poems** — tutaj umieszczony jest kod ściśle związany z udostępnianiem poematów. Istnieje to kilka sekcji, według których podzieliłem implementację:
+- **Infrastructure** — tutaj umieszczone są klasy związane z infrastrukturą aplikacji. Istnieje to kilka sekcji, według których podzieliłem implementację:
     - **Repositories** — obiekty umożliwiające łatwy dostęp do bazy danych. Każde *repository* reprezentuje jakąś tabelę w bazie.
     - **Cache** — cache przechowywane w pamięci aplikacji, wspierające dostęp z wielu wątków.
-    - **Services** — abstrakcje (interfejsy oraz klasy) reprezentujące serwisy, w szczególności umożliwiają one dostęp do zewnętrznych API
-    - **Orchestration** — zawiera abstrakcje koordynujące działania wyżej wymienionych elementów w celu realizowania właściwej funkcjonalności aplikacji.
+    - **Services** — abstrakcje (interfejsy oraz klasy) reprezentujące serwisy, w szczególności umożliwiają one dostęp do zewnętrznych API.
+- **API** — tutaj znajduje się kod powiązany z udostępnianym danych poprzez REST API.
+    - **Orchestration** — zawiera abstrakcje koordynujące działania elementów infrastruktury aplikacji. Klasy znajdujące się w tym miejscu są wykorzystywane bezpośrednio przez kontrolery.
     - **Controllers** — warstwa kontrolerów zgodnie z konwencjami ASP.NET.
 
     Dodatkowo, istnieją dwie sekcje związane z obiektami danych: 
@@ -104,14 +95,20 @@ Ponadto, baza danych została zaprojektowana by umożliwić wyszukiwanie oparte 
 
 - **SharedLibraries**. Zawiera on wszelkie biblioteki używane przez pozostałe elementy aplikacji.
 
-- **SharedDIDependencies** zawiera dodatkowe elementy "wstrzykiwane" do aplikacji (*dependency injection*), które nie są unikalne dla konkretnej funkcjonalności.
+- **Config** zawiera klasy pomocnicze związane z konfiguracją aplikacji.
 
 **[Program.cs](./backend/PoetryGlobal/Program.cs)** — program konfigurujący oraz uruchamiający serwer.
 
 **[init.sql](./db/initdb/init.sql)** — plik służący do inicjalizacji bazy danych. Definiuje on tabele, relacje między nimi oraz indeksy.
 
-<br/>
-Zacząłem też implementować prowizoryczny frontend, jednakże nie zdążyłem przygotować poprawnie działającego deploymentu (problem z dostępem poza kontenerem).
+
+# Deployment
+Aplikacja jest gotowa do deploymentu. Zalecam jednak wykonać kilka rzeczy przed jej wystawieniem:
+- Warto przygotować serwer pośredniczący między aplikacją a Internetem (np. nginx)
+- Należy skonfigurować ograniczenia dotyczące ilości zapytań z jednego źródła (rate limiting).
+ASP.NET posiada już wbudowaną funkcjonalność — wystarczy ją dodać w pliku [Program.cs](./backend/PoetryGlobal/Program.cs).
+- Aby aplikacja zachowywała się lepiej przy dużym obciążeniu, należy skonfigurować jakąś formę zabezpieczenia. Może to być coś prostego, na przykład semafor ograniczający liczbę obsługiwanych zapytań
+    
 
 
 
